@@ -41,8 +41,12 @@ module Primes
   end
 
   class Source
+    def initialize(job_number, job_count)
+      @job_number, @job_count = job_number, job_count
+    end
+
     def next_batch
-      file.close unless line = file.gets
+      file.close unless line = next_line_for_job
       line ? line.strip.split(/\s+/).map { |str| str.to_i } : nil
     end
 
@@ -50,9 +54,17 @@ module Primes
     def file
       @file ||= File.open("primes.txt")
     end
+
+    def next_line_for_job
+      lines = []
+      @job_count.times { lines << file.gets }
+      lines[@job_number]
+    end
   end
 end
 
-source = Primes::Source.new
+job_number = ENV['PARALLEL_JOB'].to_i
+job_count  = ENV['PARALLEL_JOB_COUNT'].to_i
+source = Primes::Source.new(job_number, job_count)
 test = Primes::Test.new(source)
 abort() unless test.run
