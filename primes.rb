@@ -15,12 +15,17 @@ module Primes
 
     private
     def check_primality(numbers)
-      puts "Checking primes #{numbers.first} - #{numbers.last}"
+      puts "--- Checking primes #{numbers.first} - #{numbers.last}"
+      puts "#{numbers.join(' ')}"
       numbers.reduce(true) do |memo, num|
         success = Professor.is_prime?(num)
-        puts "Failure: #{num} is not prime" unless success
+        report_failure(num) unless success
         memo && success
       end
+    end
+
+    def report_failure(number)
+      puts "+++ \033[31m" + "Failure: #{number} is not prime" + "\033[0m\n"
     end
   end
 
